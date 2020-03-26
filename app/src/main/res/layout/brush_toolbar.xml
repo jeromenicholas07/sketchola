@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/brush_sizes"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="0"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/small_brush"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+
+
+            android:background="#00FFFFFF"
+            android:src="@drawable/small" />
+
+        <ImageButton
+            android:id="@+id/medium_brush"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+
+            android:background="#00E6E6E6"
+            android:src="@drawable/medium" />
+
+        <ImageButton
+            android:id="@+id/large_brush"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:contentDescription="large"
+            android:src="@drawable/large" />
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/brushes_panel_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/brushes_panel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+</LinearLayout>

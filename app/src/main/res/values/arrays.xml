@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="brushes">
+        <item>@color/unlabeled__void</item>
+        <item>@color/ego_vehicle__void</item>
+        <item>@color/rectification_border__void</item>
+        <item>@color/out_of_roi__void</item>
+        <item>@color/static__void</item>
+        <item>@color/dynamic__void</item>
+        <item>@color/ground__void</item>
+        <item>@color/road__ground</item>
+        <item>@color/sidewalk__ground</item>
+        <item>@color/parking__ground</item>
+        <item>@color/rail_track__ground</item>
+        <item>@color/building__construction</item>
+        <item>@color/wall__construction</item>
+        <item>@color/fence__construction</item>
+        <item>@color/guard_rail__construction</item>
+        <item>@color/bridge__construction</item>
+        <item>@color/tunnel__construction</item>
+        <item>@color/pole__object</item>
+        <item>@color/polegroup__object</item>
+        <item>@color/traffic_light__object</item>
+        <item>@color/traffic_sign__object</item>
+        <item>@color/vegetation__nature</item>
+        <item>@color/terrain__nature</item>
+        <item>@color/sky__sky</item>
+        <item>@color/person__human</item>
+        <item>@color/rider__human</item>
+        <item>@color/car__vehicle</item>
+        <item>@color/truck__vehicle</item>
+        <item>@color/bus__vehicle</item>
+        <item>@color/caravan__vehicle</item>
+        <item>@color/trailer__vehicle</item>
+        <item>@color/train__vehicle</item>
+        <item>@color/motorcycle__vehicle</item>
+        <item>@color/bicycle__vehicle</item>
+        <item>@color/license_plate__vehicle</item>
+    </array>
+</resources>

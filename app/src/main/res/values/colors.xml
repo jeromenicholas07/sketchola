@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="white">#FFFFFF</color>
+    <color name="back_grey">#ADADAD</color>
+    <color name="select_grey">#868686</color>
+    <color  name="transparent">#00868686</color>
+    <color  name="toolbar_grey">#494949</color>
+    <color  name="toolbar_grey_selected">#242424</color>
+
+
+    <color name="unlabeled__void">#000000</color>
+    <color name="ego_vehicle__void">#000000</color>
+    <color name="rectification_border__void">#000000</color>
+    <color name="out_of_roi__void">#000000</color>
+    <color name="static__void">#000000</color>
+    <color name="dynamic__void">#6f4a00</color>
+    <color name="ground__void">#510051</color>
+    <color name="road__ground">#804080</color>
+    <color name="sidewalk__ground">#f423e8</color>
+    <color name="parking__ground">#faaaa0</color>
+    <color name="rail_track__ground">#e6968c</color>
+    <color name="building__construction">#464646</color>
+    <color name="wall__construction">#66669c</color>
+    <color name="fence__construction">#be9999</color>
+    <color name="guard_rail__construction">#b4a5b4</color>
+    <color name="bridge__construction">#966464</color>
+    <color name="tunnel__construction">#96785a</color>
+    <color name="pole__object">#999999</color>
+    <color name="polegroup__object">#999999</color>
+    <color name="traffic_light__object">#faaa1e</color>
+    <color name="traffic_sign__object">#dcdc00</color>
+    <color name="vegetation__nature">#6b8e23</color>
+    <color name="terrain__nature">#98fb98</color>
+    <color name="sky__sky">#4682b4</color>
+    <color name="person__human">#dc143c</color>
+    <color name="rider__human">#ff0000</color>
+    <color name="car__vehicle">#00008e</color>
+    <color name="truck__vehicle">#000046</color>
+    <color name="bus__vehicle">#003c64</color>
+    <color name="caravan__vehicle">#00005a</color>
+    <color name="trailer__vehicle">#00006e</color>
+    <color name="train__vehicle">#005064</color>
+    <color name="motorcycle__vehicle">#0000e6</color>
+    <color name="bicycle__vehicle">#770b20</color>
+    <color name="license_plate__vehicle">#00008e</color>
+
+</resources>

@@ -1,0 +1,122 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DrawActivity"
+    android:gravity="top"
+    android:background="@color/back_grey"
+    android:orientation="vertical"
+    android:id="@+id/linear_layout"
+    >
+
+    <LinearLayout
+
+        android:id="@+id/top_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+
+        android:background="#494949"
+
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/buttonNew"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:src="@drawable/new_art" />
+
+        <ImageButton
+            android:id="@+id/buttonUndo"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:src="@drawable/ic_undo_black_24dp" />
+
+        <ImageButton
+            android:id="@+id/buttonRedo"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:src="@drawable/ic_redo_black_24dp" />
+
+
+        <ImageButton
+            android:id="@+id/buttonNext"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+
+            android:layout_weight="1"
+
+            android:background="#00FFFFFF"
+            android:src="@drawable/next" />
+
+    </LinearLayout>
+
+    <cc.SketchScape.DrawingView
+
+        android:id="@+id/drawing"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        android:background="@color/white" />
+
+
+    <LinearLayout
+        android:id="@+id/bot_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+
+        android:background="#494949"
+
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/buttonBrush"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:src="@drawable/ic_brush_black_24dp" />
+
+        <ImageButton
+            android:id="@+id/buttonFillBucket"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:src="@drawable/fill_color" />
+
+        <ImageButton
+            android:id="@+id/buttonErase"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:src="@drawable/erase1" />
+
+
+    </LinearLayout>
+    <!--TODO: Populate tools here -->
+    <LinearLayout
+        android:id="@+id/bot_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+
+    </LinearLayout>
+
+</LinearLayout>
