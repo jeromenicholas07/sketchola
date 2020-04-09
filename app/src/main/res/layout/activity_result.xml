@@ -12,10 +12,10 @@
     <ImageView
 
         android:id="@+id/output"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
         android:layout_margin="15dp"
-        android:background="@color/white" />
+        android:background="@color/white"
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,27 +26,27 @@
             android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5"
+            android:layout_margin="5dp"
             android:background="@color/white"
-            android:padding="25"
+            android:padding="25dp"
             app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5"
+            android:layout_margin="5dp"
             android:background="@color/white"
-            android:padding="25"
+            android:padding="25dp"
             app:srcCompat="@drawable/ic_share_black_24dp" />
 
         <ImageButton
             android:id="@+id/save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5"
+            android:layout_margin="5dp"
             android:background="@color/white"
-            android:padding="25"
+            android:padding="25dp"
             app:srcCompat="@drawable/ic_save_black_24dp" />
 
     </LinearLayout>

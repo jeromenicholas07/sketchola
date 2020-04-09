@@ -57,6 +57,10 @@ public class DrawingView extends View {
 
     }
 
+    public Bitmap getDrawing(){
+        return bitmaps.peek();
+    }
+
     public boolean undoPaths(){
 
         if(bitmaps.size()>1){
@@ -117,14 +121,17 @@ public class DrawingView extends View {
         drawPaint.setStrokeWidth(brushSize);
 
 
+
+
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
 
         drawCanvas = new Canvas(canvasBitmap);
+        drawCanvas.drawColor(Color.WHITE);
     }
 
     @Override
@@ -182,9 +189,9 @@ public class DrawingView extends View {
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                if (erase){
-                    drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-                }
+//                if (erase){
+//                    drawPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+//                }
                 if(!fill){
                     undoneBitmaps.clear();
 
@@ -193,7 +200,7 @@ public class DrawingView extends View {
                     Bitmap copy = Bitmap.createBitmap(canvasBitmap);
                     bitmaps.push(copy);
 
-                    drawPaint.setXfermode(null);
+//                    drawPaint.setXfermode(null);
                 }
 
 
@@ -254,17 +261,20 @@ public class DrawingView extends View {
         }
         else {
             drawPaint.setColor(previousColor);
-            drawPaint.setXfermode(null);
+//            drawPaint.setXfermode(null);
         }
     }
 
     public void startNew(){
-        drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+
         undoneBitmaps.clear();
         bitmaps.clear();
+
         canvasBitmap.recycle();
-        canvasBitmap = Bitmap.createBitmap(canvasBitmap.getWidth(), canvasBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        canvasBitmap = Bitmap.createBitmap(canvasBitmap.getWidth(), canvasBitmap.getHeight(), Bitmap.Config.RGB_565);
+
         drawCanvas = new Canvas(canvasBitmap);
+        onSizeChanged(canvasBitmap.getWidth(), canvasBitmap.getHeight(),canvasBitmap.getWidth(), canvasBitmap.getHeight());
         draw(drawCanvas);
         invalidate();
     }

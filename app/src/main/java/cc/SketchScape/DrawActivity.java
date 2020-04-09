@@ -1,5 +1,7 @@
 package cc.SketchScape;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
@@ -15,6 +17,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,7 +184,15 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
                 mDrawingView.startNew();
                 break;
             case R.id.buttonNext:
+                Intent intent = new Intent(DrawActivity.this, ResultActivity.class);
+                Bitmap mDrawing = mDrawingView.getDrawing();
 
+                ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+                mDrawing.compress(Bitmap.CompressFormat.PNG, 100, bStream);
+                byte[] byteArray = bStream.toByteArray();
+
+                intent.putExtra("img", byteArray);
+                startActivity(intent);
                 break;
             case R.id.buttonUndo:
                 if (!mDrawingView.undoPaths()){
