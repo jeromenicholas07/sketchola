@@ -59,12 +59,52 @@
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/select_color"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#717171"
+        android:paddingHorizontal="5dp"
+        android:onClick="onClick"
+        >
+
+        <ImageView
+            android:id="@+id/color_display"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:src="@drawable/ic_color_chosen"
+            android:layout_alignParentLeft="true"/>
+
+        <TextView
+            android:id="@+id/color_name"
+            android:layout_margin="5dp"
+            android:text="structural-other"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:fontFamily="monospace"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/color_display"
+            />
+
+        <ImageView
+            android:id="@+id/picker_ic"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_color_picker"
+            android:layout_margin="8dp"
+            android:layout_alignParentRight="true"
+            />
+    </RelativeLayout>
+
     <cc.SketchScape.DrawingView
 
         android:id="@+id/drawing"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="15dp"
+        android:layout_margin="5dp"
         android:background="@color/white" />
 
 

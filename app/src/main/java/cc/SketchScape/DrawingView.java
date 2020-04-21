@@ -128,7 +128,7 @@ public class DrawingView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
+        canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.RGBA_F16);
 
         drawCanvas = new Canvas(canvasBitmap);
         drawCanvas.drawColor(Color.WHITE);
@@ -271,7 +271,7 @@ public class DrawingView extends View {
         bitmaps.clear();
 
         canvasBitmap.recycle();
-        canvasBitmap = Bitmap.createBitmap(canvasBitmap.getWidth(), canvasBitmap.getHeight(), Bitmap.Config.RGB_565);
+        canvasBitmap = Bitmap.createBitmap(canvasBitmap.getWidth(), canvasBitmap.getHeight(), Bitmap.Config.RGBA_F16);
 
         drawCanvas = new Canvas(canvasBitmap);
         onSizeChanged(canvasBitmap.getWidth(), canvasBitmap.getHeight(),canvasBitmap.getWidth(), canvasBitmap.getHeight());
@@ -370,6 +370,6 @@ public class DrawingView extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
         int width = getMeasuredWidth();
-        setMeasuredDimension(width, (int) (4.0/3*width));
+        setMeasuredDimension(width, width);
     }
 }
