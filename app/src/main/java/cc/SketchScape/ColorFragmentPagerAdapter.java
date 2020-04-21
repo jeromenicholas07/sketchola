@@ -32,28 +32,31 @@ public class ColorFragmentPagerAdapter extends PagerAdapter {
         System.out.println("ColorFragmentPagerAdapter getItem position : " + position);
         switch(position){
             case 0:
-                View tabLayout = context.getLayoutInflater().inflate(R.layout.color_list, container, false);
-
-                ListView colorListView = tabLayout.findViewById(R.id.colorListView);
-                colorListView.setAdapter(new ColorListAdapter(context, colorDb.get("Landscape")));
-                return tabLayout;
+                return createView(container, "Landscape");
             case 1:
-                return ColorListFragment.newInstance(colorDb.get("Animals")).getView();
+                return createView(container, "Animals");
             case 2:
-                return ColorListFragment.newInstance(colorDb.get("Outdoor Objects")).getView();
+                return createView(container, "Outdoor Objects");
             case 3:
-                return ColorListFragment.newInstance(colorDb.get("Vehicles")).getView();
+                return createView(container, "Vehicles");
             case 4:
-                return ColorListFragment.newInstance(colorDb.get("Indoor Objects")).getView();
+                return createView(container, "Indoor Objects");
             case 5:
-                return ColorListFragment.newInstance(colorDb.get("Ornaments")).getView();
+                return createView(container, "Ornaments");
             case 6:
-                return ColorListFragment.newInstance(colorDb.get("Eatables")).getView();
+                return createView(container, "Eatables");
             case 7:
-                return ColorListFragment.newInstance(colorDb.get("Misc.")).getView();
+                return createView(container, "Misc.");
             default:
                 return null;
         }
+    }
+
+    private View createView(ViewGroup container, String category){
+        View tabLayout = context.getLayoutInflater().inflate(R.layout.color_list, container, false);
+        ListView colorListView = tabLayout.findViewById(R.id.colorListView);
+        colorListView.setAdapter(new ColorListAdapter(context, colorDb.get(category)));
+        return tabLayout;
     }
 
 
