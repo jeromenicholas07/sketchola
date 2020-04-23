@@ -22,22 +22,23 @@ public class ColorListAdapter extends ArrayAdapter {
     private final DrawActivity context;
 
     ColorListAdapter(DrawActivity context, Map<String, String> colors){
-        super(context,R.layout.color_row, colors.keySet().toArray(new String[10]));
-        System.out.println("color list adapter constructor called :: " + colors.keySet().toArray(new String[10]).length);
+        super(context,R.layout.color_row, colors.keySet().toArray(new String[0]));
+        System.out.println("color list adapter constructor called :: " + colors.keySet().toArray(new String[0]).length);
         this.context = context;
-        this.labels = colors.keySet().toArray(new String[10]);
-        this.colors = colors.values().toArray(new String[10]);
+        this.labels = colors.keySet().toArray(new String[0]);
+        this.colors = colors.values().toArray(new String[0]);
     }
 
     @NonNull
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull final ViewGroup parent) {
         LayoutInflater inflater=context.getLayoutInflater();
-        View rowView = inflater.inflate(R.layout.color_row, null,true);
+        View rowView = inflater.inflate(R.layout.color_row, parent,false);
 
         ImageView colorDisplay = rowView.findViewById(R.id.color_row_display);
         TextView colorName = rowView.findViewById(R.id.color_row_name_display);
 
+//        System.out.println(position + colors[position]);
         int color = Color.parseColor(colors[position]);
         Drawable unwrappedDrawable = colorDisplay.getDrawable();
         Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);

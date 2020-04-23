@@ -24,9 +24,9 @@ import okhttp3.Response;
 public class FlaskTask extends AsyncTask<RequestBody, Void, Bitmap> {
 
     final private String url = "http://104.197.55.76:5000/api/process";
-    private Context context;
+    private DrawActivity context;
 
-    public FlaskTask(Context context) {
+    public FlaskTask(DrawActivity context) {
         this.context = context;
     }
 
@@ -42,6 +42,7 @@ public class FlaskTask extends AsyncTask<RequestBody, Void, Bitmap> {
 
         intent.putExtra("img", byteArray);
         context.startActivity(intent);
+        context.dialog.dismiss();
     }
 
     @Override

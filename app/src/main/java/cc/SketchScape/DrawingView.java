@@ -1,5 +1,6 @@
 package cc.SketchScape;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -9,6 +10,7 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -45,6 +47,7 @@ public class DrawingView extends View {
     // To enable and disable erasing mode.
     private boolean erase = false;
     private boolean fill = false;
+    AlertDialog pd;
 
     private Stack<Bitmap> bitmaps = new Stack<>();
     private Stack<Bitmap> undoneBitmaps = new Stack<>();
@@ -54,7 +57,10 @@ public class DrawingView extends View {
         super(context, attrs);
 
         setUpDrawing();
-
+        AlertDialog.Builder ab = new AlertDialog.Builder(context)
+                .setMessage("Filling up, please wait...")
+                .setCancelable(false);
+        pd = ab.create();
     }
 
     public Bitmap getDrawing(){
@@ -171,9 +177,9 @@ public class DrawingView extends View {
                     
                     Point p = new Point( (int)touchX, (int)touchY );
                     int col = canvasBitmap.getPixel((int)touchX, (int)touchY);
-                    floodFill(canvasBitmap, p, col, paintColor);
-                    Bitmap copy = Bitmap.createBitmap(canvasBitmap);
-                    bitmaps.push(copy);
+                    new FillTask(canvasBitmap, p, col, paintColor).execute();
+//                    floodFill(canvasBitmap, p, col, paintColor);
+
                 }
                 else{
                     drawPath.moveTo(touchX, touchY);
@@ -217,6 +223,41 @@ public class DrawingView extends View {
         return true;
     }
 
+    class FillTask extends AsyncTask<Void, Integer, Void>{
+
+        Bitmap bmp;
+        Point pt;
+        int replacementColor,targetColor;
+
+        public FillTask(Bitmap bm,Point p, int sc, int tc)
+        {
+            this.bmp=bm;
+            this.pt=p;
+            this.targetColor=sc;
+            this.replacementColor=tc;
+            pd.show();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            floodFill(canvasBitmap, pt, targetColor, replacementColor);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Bitmap copy = Bitmap.createBitmap(canvasBitmap);
+            bitmaps.push(copy);
+            pd.dismiss();
+            invalidate();
+        }
+    }
+
 
     float threshold;
     public void setColor(String newColor){
@@ -249,8 +290,6 @@ public class DrawingView extends View {
     public int getLastBrushSize(){
         return lastBrushSize;
     }
-
-
 
     public void setErase(boolean isErase){
         //set erase true or false

@@ -47,7 +47,7 @@ public class ColorSelectDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        ViewGroup dialog = (ViewGroup) inflater.inflate(R.layout.fragment_color_select_dialog, container, true);
+        View dialog = inflater.inflate(R.layout.fragment_color_select_dialog, container, true);
 
 //        context.setContentView(dialog);
         TabLayout tabLayout = dialog.findViewById(R.id.tab_layout);
@@ -56,13 +56,12 @@ public class ColorSelectDialogFragment extends DialogFragment {
 
         ColorFragmentPagerAdapter colViewPagerAdapter = new ColorFragmentPagerAdapter(context, colorDb);
         viewPager.setAdapter(colViewPagerAdapter);
-        viewPager.setBackgroundColor(Color.GRAY);
+//        viewPager.setBackgroundColor(Color.GRAY);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
-                System.out.println("tab changed");
             }
 
             @Override

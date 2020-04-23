@@ -32,30 +32,31 @@ public class ColorFragmentPagerAdapter extends PagerAdapter {
         System.out.println("ColorFragmentPagerAdapter getItem position : " + position);
         switch(position){
             case 0:
-                return createView(container, "Landscape");
+                return createView(position, container, "Landscape");
             case 1:
-                return createView(container, "Animals");
+                return createView(position,container, "Animals");
             case 2:
-                return createView(container, "Outdoor Objects");
+                return createView(position, container, "Outdoor Objects");
             case 3:
-                return createView(container, "Vehicles");
+                return createView(position, container, "Vehicles");
             case 4:
-                return createView(container, "Indoor Objects");
+                return createView(position, container, "Indoor Objects");
             case 5:
-                return createView(container, "Ornaments");
+                return createView(position, container, "Ornaments");
             case 6:
-                return createView(container, "Eatables");
+                return createView(position, container, "Eatables");
             case 7:
-                return createView(container, "Misc.");
+                return createView(position, container, "Misc.");
             default:
                 return null;
         }
     }
 
-    private View createView(ViewGroup container, String category){
+    private View createView(int position, ViewGroup container, String category){
         View tabLayout = context.getLayoutInflater().inflate(R.layout.color_list, container, false);
         ListView colorListView = tabLayout.findViewById(R.id.colorListView);
         colorListView.setAdapter(new ColorListAdapter(context, colorDb.get(category)));
+        container.addView(tabLayout);
         return tabLayout;
     }
 

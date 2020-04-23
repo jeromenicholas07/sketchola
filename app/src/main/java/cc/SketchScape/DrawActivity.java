@@ -1,6 +1,7 @@
 package cc.SketchScape;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -77,6 +78,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
 
     ArrayList<String> labels;
     ArrayList<String> colors;
+    DialogFragment colorSelect;
+    AlertDialog  dialog;
 
     private DrawingView mDrawingView;
     private ImageButton newButton, nextButton, undoButton, redoButton, brushButton, fillButton, eraseButton;
@@ -177,6 +180,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
         colorDisplay.setImageDrawable(wrappedDrawable);
         colorNameDisplay.setText(labels.get(colors.indexOf(hexColor)));
         mDrawingView.setColor(color);
+        if(colorSelect!=null && colorSelect.isVisible()){
+            colorSelect.dismiss();
+        }
     }
 
     public void setColor(int color){
@@ -240,7 +246,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 ft.addToBackStack(null);
 
-                DialogFragment colorSelect = new ColorSelectDialogFragment();
+                colorSelect = new ColorSelectDialogFragment();
                 colorSelect.show(ft, "select-color");
 
 
@@ -299,26 +305,38 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
 
     private void processImage() {
 
+        AlertDialog.Builder builder =  new AlertDialog.Builder(this)
+                .setTitle("Processing")
+                .setMessage("Please wait...")
+                .setCancelable(false);
+
+        dialog = builder.create();
+        dialog.show();
+
         int[] flattenedArr = downsampleImage();
-        Bitmap inp = Bitmap.createBitmap(256,256, Bitmap.Config.RGBA_F16);
-        int ind = 0;
-        for(int i = 0; i < 256; i++){
-            for(int j =0; j < 256; j++){
-                inp.setPixel(j,i,Color.rgb(flattenedArr[ind],flattenedArr[ind],flattenedArr[ind]));
-                ind++;
-            }
+
+        if(flattenedArr == null){
+            Toast.makeText(DrawActivity.this, "Draw something!", Toast.LENGTH_LONG);
         }
-
-
-        Intent intent = new Intent(DrawActivity.this, ResultActivity.class);
-
-        ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-        inp = Bitmap.createScaledBitmap(inp, 1024,1024, false);
-        inp.compress(Bitmap.CompressFormat.PNG, 100, bStream);
-        byte[] byteArray = bStream.toByteArray();
-
-        intent.putExtra("img", byteArray);
-        startActivity(intent);
+//        Bitmap inp = Bitmap.createBitmap(256,256, Bitmap.Config.RGBA_F16);
+//        int ind = 0;
+//        for(int i = 0; i < 256; i++){
+//            for(int j =0; j < 256; j++){
+//                inp.setPixel(j,i,Color.rgb(flattenedArr[ind],flattenedArr[ind],flattenedArr[ind]));
+//                ind++;
+//            }
+//        }
+//
+//
+//        Intent intent = new Intent(DrawActivity.this, ResultActivity.class);
+//
+//        ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+//        inp = Bitmap.createScaledBitmap(inp, 1024,1024, false);
+//        inp.compress(Bitmap.CompressFormat.PNG, 100, bStream);
+//        byte[] byteArray = bStream.toByteArray();
+//
+//        intent.putExtra("img", byteArray);
+//        startActivity(intent);
 
         MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 
@@ -328,6 +346,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
         RequestBody postBody = multipartBodyBuilder.build();
 
         new FlaskTask(DrawActivity.this).execute(postBody);
+
 
 
 //            Tensor inputTensor = Tensor.fromBlob(flattenedArr , new long[]{1,1,256,256});
@@ -373,19 +392,24 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public int[] downsampleImage(){
-        int[] ogpixels = new int[10000*1000];
-        Bitmap b = mDrawingView.getDrawing();
-        b.getPixels(ogpixels,0,b.getWidth(),0,0,b.getWidth(),b.getHeight());
-        List<String> uc = new ArrayList<>();
-        for(int i : ogpixels){
-            String hexCode = String.format("#%06X", (0xFFFFFF & i));
-            if(!uc.contains(hexCode)){
-                uc.add(hexCode);
-                System.out.println(hexCode);
-            }
-        }
+//        int[] ogpixels = new int[10000*1000];
+//        Bitmap b = mDrawingView.getDrawing();
+//        b.getPixels(ogpixels,0,b.getWidth(),0,0,b.getWidth(),b.getHeight());
+//        List<String> uc = new ArrayList<>();
+//        System.out.println("detected pixels:");
+//        for(int i : ogpixels){
+//            String hexCode = String.format("#%06X", (0xFFFFFF & i));
+//            if(!uc.contains(hexCode)){
+//                uc.add(hexCode);
+//                System.out.println(hexCode);
+//            }
+//        }
 
-        Bitmap bitmap = Bitmap.createScaledBitmap(mDrawingView.getDrawing(), 256, 256, false);
+        Bitmap drawing = mDrawingView.getDrawing();
+        if(drawing == null){
+            return null;
+        }
+        Bitmap bitmap = Bitmap.createScaledBitmap(drawing, 256, 256, false);
         ArrayList<String> colors = getJsonAsset("colors");
         assert colors != null;
 
@@ -396,25 +420,47 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
         List<String> uniColors = new ArrayList<>();
         System.out.println("colors: ");
         for(int i = 0; i < allpixels.length; i++){
-            String hexCode = String.format("#%06X", (0xFFFFFF & allpixels[i]));
+            String hexCode = String.format("#%06X", (0xFFFFFF & allpixels[i])).toLowerCase();
 
-            if(colors.contains(hexCode.toLowerCase())){
-                if(!uniColors.contains(hexCode.toLowerCase())){
-                    uniColors.add(hexCode.toLowerCase());
-                    System.out.println(hexCode + " :: " + colors.indexOf(hexCode.toLowerCase()));
+            if(colors.contains(hexCode)){
+                if(!uniColors.contains(hexCode)){
+                    uniColors.add(hexCode);
+                    System.out.println(hexCode + " :: " + colors.indexOf(hexCode));
                 }
 
-                allpixels[i] = colors.indexOf(hexCode.toLowerCase());
+                allpixels[i] = colors.indexOf(hexCode);
             }
             else{
+                if(hexCode.equals("#ffffff")){
+                    hexCode = "#000000";
+                }
+
+                double minDist = Double.MAX_VALUE;
+                String newHex = "#000000";
+                for(String col : colors){
+                    double diff = colorDiff(col, hexCode);
+                    if(minDist > diff){
+                        minDist = diff;
+                        newHex = col;
+                    }
+                }
+
                 if(!uniColors.contains(hexCode.toLowerCase())){
                     uniColors.add(hexCode.toLowerCase());
-                    System.out.println(hexCode + " :: unidentified");
+                    System.out.println(hexCode + " :: unidentified : " + colors.indexOf(newHex));
                 }
-                allpixels[i] = 182;
+                allpixels[i] = colors.indexOf(newHex);
             }
         }
         return allpixels;
+    }
+
+    private double colorDiff(String hexA, String hexB){
+        Color a = Color.valueOf(Color.parseColor(hexA));
+        Color b = Color.valueOf(Color.parseColor(hexB));
+        return Math.sqrt(Math.pow(a.red() - b.red(), 2)
+                + Math.pow(a.green() - b.green(), 2)
+                + Math.pow(a.blue() - b.blue(), 2));
     }
 
     private ArrayList<String> getJsonAsset(String fileName){
@@ -522,66 +568,66 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
             large_button.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.select_grey));
         }
 
-        LinearLayout brushSizes = tools.findViewById(R.id.brush_sizes);
-//        brushSizes.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 50,0));
-
-        LinearLayout panel = tools.findViewById(R.id.brushes_panel);
-//        brushSizes.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,1));
-
-
-        for (String cat : colorDb.keySet()) {
-            View catContainer = getLayoutInflater().inflate(R.layout.palette_container, null, false);
-            LinearLayout catTop = catContainer.findViewById(R.id.palette_top);
-            TextView catTitle = catContainer.findViewById(R.id.title_container);
-            catTitle.setText(cat);
-
-            Map<String, String> colors = colorDb.get(cat);
-            for(String cname : colors.keySet()){
-                String hex = colors.get(cname);
-
-
-                View colContainer = getLayoutInflater().inflate(R.layout.palette_container, null, false);
-                LinearLayout colTop = colContainer.findViewById(R.id.palette_top);
-                TextView colTitle = colContainer.findViewById(R.id.title_container);
-                colTitle.setText(cname);
-
-                ImageButton ib = new ImageButton(this);
-                ib.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT,1));
-                ib.setMinimumHeight(175);
-                ib.setMinimumWidth(220);
-
-                ib.setBackgroundColor(Color.parseColor(hex));
-                ib.setTag(hex);
-                ib.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        int color = 0xff000000;
-
-//                        Drawable background = view.getBackground();
-//                        if (background instanceof ColorDrawable)
-//                            color = ((ColorDrawable) background).getColor();
-                        color = Color.parseColor((String) view.getTag());
-
-                        mDrawingView.setColor(color);
-//                        System.out.println(color);
-                    }
-                });
-
-
-                colTop.addView(ib);
-
-                catTop.addView(colContainer);
-            }
-
-            View div = new View(this);
-            div.setMinimumWidth(6);
-
-
-
-            panel.addView(catContainer);
-            panel.addView(div);
-            panel.invalidate();
-        }
+//        LinearLayout brushSizes = tools.findViewById(R.id.brush_sizes);
+////        brushSizes.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 50,0));
+//
+//        LinearLayout panel = tools.findViewById(R.id.brushes_panel);
+////        brushSizes.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,1));
+//
+//
+//        for (String cat : colorDb.keySet()) {
+//            View catContainer = getLayoutInflater().inflate(R.layout.palette_container, null, false);
+//            LinearLayout catTop = catContainer.findViewById(R.id.palette_top);
+//            TextView catTitle = catContainer.findViewById(R.id.title_container);
+//            catTitle.setText(cat);
+//
+//            Map<String, String> colors = colorDb.get(cat);
+//            for(String cname : colors.keySet()){
+//                String hex = colors.get(cname);
+//
+//
+//                View colContainer = getLayoutInflater().inflate(R.layout.palette_container, null, false);
+//                LinearLayout colTop = colContainer.findViewById(R.id.palette_top);
+//                TextView colTitle = colContainer.findViewById(R.id.title_container);
+//                colTitle.setText(cname);
+//
+//                ImageButton ib = new ImageButton(this);
+//                ib.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT,1));
+//                ib.setMinimumHeight(175);
+//                ib.setMinimumWidth(220);
+//
+//                ib.setBackgroundColor(Color.parseColor(hex));
+//                ib.setTag(hex);
+//                ib.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        int color = 0xff000000;
+//
+////                        Drawable background = view.getBackground();
+////                        if (background instanceof ColorDrawable)
+////                            color = ((ColorDrawable) background).getColor();
+//                        color = Color.parseColor((String) view.getTag());
+//
+//                        mDrawingView.setColor(color);
+////                        System.out.println(color);
+//                    }
+//                });
+//
+//
+//                colTop.addView(ib);
+//
+//                catTop.addView(colContainer);
+//            }
+//
+//            View div = new View(this);
+//            div.setMinimumWidth(6);
+//
+//
+//
+//            panel.addView(catContainer);
+//            panel.addView(div);
+//            panel.invalidate();
+//        }
 
         bot_bar.addView(tools);
 
@@ -660,70 +706,70 @@ public class DrawActivity extends AppCompatActivity implements View.OnClickListe
         mDrawingView.setErase(false);
         mDrawingView.setFill(true);
 
-        View tools = getLayoutInflater().inflate(R.layout.bucket_toolbar, baseLayout, false);
+//        View tools = getLayoutInflater().inflate(R.layout.bucket_toolbar, baseLayout, false);
 
 
-        LinearLayout panel = tools.findViewById(R.id.brushes_panel);
-//        brushSizes.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,1));
-
-
-        for (String cat : colorDb.keySet()) {
-            View catContainer = getLayoutInflater().inflate(R.layout.palette_container, null, false);
-            LinearLayout catTop = catContainer.findViewById(R.id.palette_top);
-            TextView catTitle = catContainer.findViewById(R.id.title_container);
-            catTitle.setText(cat);
-
-            Map<String, String> colors = colorDb.get(cat);
-            for(String cname : colors.keySet()){
-                String hex = colors.get(cname);
-
-
-                View colContainer = getLayoutInflater().inflate(R.layout.palette_container, null, false);
-                LinearLayout colTop = colContainer.findViewById(R.id.palette_top);
-                TextView colTitle = colContainer.findViewById(R.id.title_container);
-                colTitle.setText(cname);
-
-                ImageButton ib = new ImageButton(this);
-                ib.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT,1));
-                ib.setMinimumHeight(175);
-                ib.setMinimumWidth(220);
-
-                ib.setBackgroundColor(Color.parseColor(hex));
-                ib.setTag(hex);
-                ib.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        int color = 0xff000000;
-                        color = Color.parseColor((String) view.getTag());
-
-                        mDrawingView.setColor(color);
-
-//                        Drawable background = view.getBackground();
-//                        if (background instanceof ColorDrawable)
-//                            color = ((ColorDrawable) background).getColor();
+//        LinearLayout panel = tools.findViewById(R.id.brushes_panel);
+////        brushSizes.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,1));
+//
+//
+//        for (String cat : colorDb.keySet()) {
+//            View catContainer = getLayoutInflater().inflate(R.layout.palette_container, null, false);
+//            LinearLayout catTop = catContainer.findViewById(R.id.palette_top);
+//            TextView catTitle = catContainer.findViewById(R.id.title_container);
+//            catTitle.setText(cat);
+//
+//            Map<String, String> colors = colorDb.get(cat);
+//            for(String cname : colors.keySet()){
+//                String hex = colors.get(cname);
+//
+//
+//                View colContainer = getLayoutInflater().inflate(R.layout.palette_container, null, false);
+//                LinearLayout colTop = colContainer.findViewById(R.id.palette_top);
+//                TextView colTitle = colContainer.findViewById(R.id.title_container);
+//                colTitle.setText(cname);
+//
+//                ImageButton ib = new ImageButton(this);
+//                ib.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT,1));
+//                ib.setMinimumHeight(175);
+//                ib.setMinimumWidth(220);
+//
+//                ib.setBackgroundColor(Color.parseColor(hex));
+//                ib.setTag(hex);
+//                ib.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        int color = 0xff000000;
+//                        color = Color.parseColor((String) view.getTag());
 //
 //                        mDrawingView.setColor(color);
-//                        System.out.println(color);
-                    }
-                });
+//
+////                        Drawable background = view.getBackground();
+////                        if (background instanceof ColorDrawable)
+////                            color = ((ColorDrawable) background).getColor();
+////
+////                        mDrawingView.setColor(color);
+////                        System.out.println(color);
+//                    }
+//                });
+//
+//
+//                colTop.addView(ib);
+//
+//                catTop.addView(colContainer);
+//            }
+//
+//            View div = new View(this);
+//            div.setMinimumWidth(6);
+//
+//
+//
+//            panel.addView(catContainer);
+//            panel.addView(div);
+//            panel.invalidate();
+//        }
 
-
-                colTop.addView(ib);
-
-                catTop.addView(colContainer);
-            }
-
-            View div = new View(this);
-            div.setMinimumWidth(6);
-
-
-
-            panel.addView(catContainer);
-            panel.addView(div);
-            panel.invalidate();
-        }
-
-        bot_bar.addView(tools);
+//        bot_bar.addView(tools);
 
     }
 
